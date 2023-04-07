@@ -1,0 +1,39 @@
+<div>
+      <mat-card style="width: 20rem; height: 515px;">
+        <mat-card-content>{{user}}</mat-card-content>
+        <mat-divider></mat-divider>
+        <br/>
+
+        <div #mychats style="overflow-y: scroll; height: 75%;">
+        <div *ngFor="let message of message_list" class="message-container" style="width: 100%;">
+
+            <div *ngIf="message.author == author; then trueBlock; else falseBlock"></div>
+            
+            <ng-template #trueBlock>
+                <div *ngIf="message.message!=''" class="message_from_me">
+                    <span class="message-span">{{message.message}}</span>
+                </div>
+            </ng-template>
+
+            <ng-template #falseBlock>
+                <div *ngIf="message.message!=''" class="message_from_user">
+                    <span class="message-span">{{message.message}}</span>
+                </div>
+            </ng-template>
+
+        </div>
+        </div>
+
+        <div style="bottom: 0; position: absolute;width: 90%;">
+            <form [formGroup]="messageFormGroup" (ngSubmit)="sendMessage(messageFormGroup.value)">
+            <mat-form-field appearance="outline" class="example-form-field">
+                <mat-label>Message</mat-label>
+                <input formControlName="message" matInput type="text" [(ngModel)]="value" >
+                <button *ngIf="value" type="submit" matSuffix mat-icon-button aria-label="send" (ngSubmit)="sendMessage(messageFormGroup.value)">
+                <mat-icon style="fill: #abcdef">send</mat-icon>
+                </button>
+            </mat-form-field>
+            </form>
+        </div>
+    </mat-card>
+</div>

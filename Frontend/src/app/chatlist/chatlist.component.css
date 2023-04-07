@@ -1,0 +1,38 @@
+.container-body {
+    margin-top: 5%;
+    margin-left: 1%;
+}
+
+.chat-list {
+    /* background-color: red;  */
+    width: 35%; 
+    height: 550px; 
+    float:left;
+    /* border: 0.5px solid grey; */
+}
+
+.chatroom-app {
+    float: right;
+    width: 100%;
+}
+
+.chat-room {
+    /* background-color: yellow;  */
+    width:64%; 
+    height: 550px; 
+    float:left;
+    margin-left: 1%;
+    /* border: 0.5px solid grey; */
+}
+
+.user-chat-list {
+    /* height: 10%; */
+    /* background-color: cadetblue; */
+    border-bottom: 1px solid rgb(172, 172, 172);
+    /* width: 92%; */
+    /* border: 0.5px solid grey; */
+}
+
+.user-chat-list:hover {
+    background-color: rgb(228, 248, 250);
+}

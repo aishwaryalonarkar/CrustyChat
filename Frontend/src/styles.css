@@ -1,0 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 90%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.custom_snackbar {
+    background-color: rgb(235, 195, 85);
+    color: rgb(17, 4, 88);
+    margin-top: 50%;
+    width: 200px;
+}
+
+.mat-simple-snackbar-action > button { color: black } 

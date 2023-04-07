@@ -1,0 +1,7 @@
+{
+  "master": "redis://127.0.0.1:6379",
+  "slave_replica": "redis://127.0.0.1:6380",
+  "slave_backup": "redis://:password@127.0.0.1:6381/",
+  "master_hash": "e1a8d2745cfc4d0a2a333da659bdadccb87e015b221bb7caea9e6fccda7df648",
+  "slave_backup_hash": ""
+}

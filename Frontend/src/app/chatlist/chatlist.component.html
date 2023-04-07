@@ -1,0 +1,37 @@
+<div class = "container-body">
+    <div style=" width: 100%; height: auto;">  
+  
+        <div class="chat-list">  
+            <mat-card style="margin: 2px; height: 93.2%; width: 89%;">
+
+                <h3>chats</h3>
+                <mat-divider></mat-divider>
+
+                <div style="height: 60%; width: 100%; margin-top: 10%;">
+                    <mat-card class="user-chat-list" *ngFor="let user of chatList">
+                        <div style="padding: 1%;" (click)="change_open_chat({user})">
+                            {{user}}
+                        </div>
+                    </mat-card>
+                </div>
+
+
+                <div style="bottom: 0; position: absolute;width: 90%;">
+                    <form [formGroup]="addUserForm" (ngSubmit)="addUser(addUserForm.value)">
+                    <mat-form-field appearance="outline" class="example-form-field">
+                        <mat-label>Add User</mat-label>
+                        <input formControlName="username" matInput type="text" [(ngModel)]="value" >
+                        <button *ngIf="value" type="submit" matSuffix mat-icon-button aria-label="send" (ngSubmit)="addUser(addUserForm.value)">
+                        <mat-icon style="fill: #abcdef">send</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    </form>
+                </div>
+            </mat-card>
+        </div>  
+  
+        <div class="chat-room">  
+        <app-chatroom class = "chatroom-app"></app-chatroom>
+        </div>  
+    </div>  
+</div>

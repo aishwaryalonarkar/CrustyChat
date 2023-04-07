@@ -1,0 +1,17 @@
+<div style="margin: 10%;">
+      <form [formGroup]="firstFormGroup"  (ngSubmit)="auth_1(firstFormGroup.value)">
+        <ng-template matStepLabel>Auth 1</ng-template>
+            <mat-form-field appearance="outline">
+                <mat-label>Username </mat-label>
+                <input type="text" placeholder="username" formControlName="username"  matNativeControl matInput autocomplete="on">
+            </mat-form-field>
+        
+            <mat-form-field appearance="outline" style="margin-left: 2%;">
+                <mat-label>Password </mat-label>
+                <input type="password" placeholder="password" formControlName="password"  matNativeControl matInput autocomplete="on">
+            </mat-form-field>
+        <div>
+          <button mat-raised-button  type="submit" color="primary" >Submit</button>
+        </div>
+      </form>
+</div>
