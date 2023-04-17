@@ -35,19 +35,20 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this._messagingService.setToken("");
 
-    // const key = CryptoJS.enc.Hex.parse('0123456789abcdef0123456789abcdef');
+
+    // let enc_key = this.key;
+    // let plaintext = "hello what";
+    // // let key1 = CryptoJS.enc.Hex.parse(this.key);
     // const iv = CryptoJS.enc.Hex.parse('');
-
-    // const plaintext = 'Hello, world!';
-    // const ciphertext = CryptoJS.AES.encrypt(plaintext, key, { iv: iv, mode: CryptoJS.mode.ECB }).toString();
-
+    // const ciphertext = CryptoJS.AES.encrypt(plaintext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
     // console.log(ciphertext);
+    // // return ciphertext;
+    // // gsJ+yRfqqCFCA4AkmbVO4Q==
+    // // gsJ+yRfqqCFCA4AkmbVO4Q==
+    // const pt = CryptoJS.AES.decrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
+    // console.log(pt)
 
-    // const pt = CryptoJS.AES.decrypt(ciphertext,key, { iv: iv, mode:CryptoJS.mode.ECB }).toString(CryptoJS.enc.Utf8);
-    // console.log(pt);
-
-    // YHhGqcOK2Vd94hYCmnvEAA==
-    // YHhGqcOK2Vd94hYCmnvEAA==
+    
   }
 
 
@@ -55,6 +56,7 @@ export class LoginComponent implements OnInit {
   auth_1(auth:any) {
     console.log(auth);
     let username = auth.username;
+    let key1 = username;
     let user_data = {
       "username" : username,
       "password" : this.encryptUsingAES(auth.password,this.key)
@@ -136,16 +138,17 @@ export class LoginComponent implements OnInit {
 
   
   encryptUsingAES(plaintext:any,enc_key:any) {
-    let key = CryptoJS.enc.Hex.parse(enc_key);
+    // let key = CryptoJS.enc.Hex.parse(enc_key);
     const iv = CryptoJS.enc.Hex.parse('');
-    const ciphertext = CryptoJS.AES.encrypt(plaintext, key, { iv: iv, mode: CryptoJS.mode.ECB }).toString();
+    const ciphertext = CryptoJS.AES.encrypt(plaintext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
     return ciphertext;
   }
 
   decryptionUsingAES(ciphertext:any,dec_key:any) {
-    let key = CryptoJS.enc.Hex.parse(dec_key);
+    // let key = CryptoJS.enc.Hex.parse(dec_key);
     const iv = CryptoJS.enc.Hex.parse('');
-    const plaintext = CryptoJS.AES.encrypt(ciphertext, key, { iv: iv, mode: CryptoJS.mode.ECB }).toString();
+    const plaintext = CryptoJS.AES.decrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
+    // const plaintext = CryptoJS.AES.encrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
     return plaintext;
   }
 

@@ -96,16 +96,17 @@ export class RegisterComponent implements OnInit {
 
     
   encryptUsingAES(plaintext:any,enc_key:any) {
-    let key = CryptoJS.enc.Hex.parse(enc_key);
+    // let key = CryptoJS.enc.Hex.parse(enc_key);
     const iv = CryptoJS.enc.Hex.parse('');
-    const ciphertext = CryptoJS.AES.encrypt(plaintext, key, { iv: iv, mode: CryptoJS.mode.ECB }).toString();
+    const ciphertext = CryptoJS.AES.encrypt(plaintext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
     return ciphertext;
   }
 
   decryptionUsingAES(ciphertext:any,dec_key:any) {
-    let key = CryptoJS.enc.Hex.parse(dec_key);
+    // let key = CryptoJS.enc.Hex.parse(dec_key);
     const iv = CryptoJS.enc.Hex.parse('');
-    const plaintext = CryptoJS.AES.encrypt(ciphertext, key, { iv: iv, mode: CryptoJS.mode.ECB }).toString();
+    // const plaintext = CryptoJS.AES.encrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
+    const plaintext = CryptoJS.AES.decrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
     return plaintext;
   }
 }
