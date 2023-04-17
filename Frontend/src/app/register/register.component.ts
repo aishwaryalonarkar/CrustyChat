@@ -11,6 +11,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+  key = CryptoJS.enc.Hex.parse('0123456789abcdef0123456789abcdef');
 
   firstFormGroup: FormGroup;
   imageData : any;
@@ -32,10 +33,14 @@ export class RegisterComponent implements OnInit {
   new(user:any) {
     this.user = {
       "username" : user.UserName,
-      "password" : this.encryptUsingTripleDES(user.Password,true),
-      "phone" : this.encryptUsingTripleDES(user.phone,true),
-      "name" : this.encryptUsingTripleDES(user.name,true),
-      "email" : this.encryptUsingTripleDES(user.email,true),
+      // "password" : this.encryptUsingTripleDES(user.Password,true),
+      // "phone" : this.encryptUsingTripleDES(user.phone,true),
+      // "name" : this.encryptUsingTripleDES(user.name,true),
+      // "email" : this.encryptUsingTripleDES(user.email,true),
+      "password" : this.encryptUsingAES(user.Password,this.key),
+      "phone" : this.encryptUsingAES(user.phone,this.key),
+      "name" : this.encryptUsingAES(user.name,this.key),
+      "email" : this.encryptUsingAES(user.email,this.key),
       "hash" :"ab",
       "chats" :""
     }
@@ -67,13 +72,13 @@ export class RegisterComponent implements OnInit {
 
 
   // credits -> https://stackblitz.com/edit/encryption-decryption-triple-des-angular-wo1k7m?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Fencryption.service.ts
-  key: any = "MTIzNDU2Nzg5MEFCQ0RFRkdISUpLTE1O";
+  key1: any = "MTIzNDU2Nzg5MEFCQ0RFRkdISUpLTE1O";
   IV = "MTIzNDU2Nzg=";
 
   // ENCRYPTION USING CBC TRIPLE DES
   encryptUsingTripleDES(res: any, typeObj: boolean): string {
     const data = typeObj ? JSON.stringify(res) : res;
-    const keyHex = CryptoJS.enc.Utf8.parse(this.key);
+    const keyHex = CryptoJS.enc.Utf8.parse(this.key1);
     const iv = CryptoJS.enc.Utf8.parse(this.IV);
     const mode = CryptoJS.mode.CBC;
     const encrypted = CryptoJS.TripleDES.encrypt(data, keyHex, { iv, mode });
@@ -82,10 +87,25 @@ export class RegisterComponent implements OnInit {
 
   // DECRYPTION USING CBC TRIPLE DES
   decryptUsingTripleDES(encrypted: string): string {
-    const keyHex = CryptoJS.enc.Utf8.parse(this.key);
+    const keyHex = CryptoJS.enc.Utf8.parse(this.key1);
     const iv = CryptoJS.enc.Utf8.parse(this.IV);
     const mode = CryptoJS.mode.CBC;
     const decrypted = CryptoJS.TripleDES.decrypt(encrypted, keyHex, { iv, mode });
     return decrypted.toString(CryptoJS.enc.Utf8);
+  }
+
+    
+  encryptUsingAES(plaintext:any,enc_key:any) {
+    let key = CryptoJS.enc.Hex.parse(enc_key);
+    const iv = CryptoJS.enc.Hex.parse('');
+    const ciphertext = CryptoJS.AES.encrypt(plaintext, key, { iv: iv, mode: CryptoJS.mode.ECB }).toString();
+    return ciphertext;
+  }
+
+  decryptionUsingAES(ciphertext:any,dec_key:any) {
+    let key = CryptoJS.enc.Hex.parse(dec_key);
+    const iv = CryptoJS.enc.Hex.parse('');
+    const plaintext = CryptoJS.AES.encrypt(ciphertext, key, { iv: iv, mode: CryptoJS.mode.ECB }).toString();
+    return plaintext;
   }
 }

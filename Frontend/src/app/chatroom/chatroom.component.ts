@@ -16,6 +16,8 @@ import * as CryptoJS from 'crypto-js';
 export class ChatroomComponent implements OnInit {
 
   // @ViewChild('mychats') myDiv: any;
+  key = CryptoJS.enc.Hex.parse('0123456789abcdef0123456789abcdef');
+
   @ViewChild('mychats')
   myDiv!: ElementRef;
 
@@ -69,7 +71,7 @@ export class ChatroomComponent implements OnInit {
       // Code to be executed after 1 second
       this.getMessage();
       console.log('Delayed message');
-    }, 2000);
+    }, 1000);
     }    
   }
 
@@ -107,8 +109,10 @@ export class ChatroomComponent implements OnInit {
       let new_message = {
         // "message" : this.encryptUsingTripleDES(message.message,true),
         "message" : message.message.trim(),
-        "author" : this.encryptUsingTripleDES(this.author.trim(),true).trim(),
-        "date_time" : this.encryptUsingTripleDES(date_time.trim(),true).trim(),
+        // "author" : this.encryptUsingTripleDES(this.author.trim(),true).trim(),
+        // "date_time" : this.encryptUsingTripleDES(date_time.trim(),true).trim(),
+        "author" : this.encryptUsingAES(this.author.trim(),this.key).trim(),
+        "date_time" : this.encryptUsingAES(date_time.trim(),this.key).trim(),
       };
       console.log(new_message);
       // http://127.0.0.1:8080/send?q1,m1,auth,datetime
@@ -152,7 +156,7 @@ export class ChatroomComponent implements OnInit {
             let message_details = {
               // "message" : this.decryptUsingTripleDES(chats[i].message).replaceAll('"',''),
               "message" : chats[i].message,
-              "author" : this.decryptUsingTripleDES(chats[i].author).replaceAll('"',''),
+              "author" : this.decryptionUsingAES(chats[i].author,this.key).replaceAll('"',''),
               "date_time" : chats[i].date_time,
               // "date_time" : this.decryptUsingTripleDES(chats[i].date_time).replaceAll('"',''),
             };
@@ -169,13 +173,13 @@ export class ChatroomComponent implements OnInit {
 
   
   // credits -> https://stackblitz.com/edit/encryption-decryption-triple-des-angular-wo1k7m?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Fencryption.service.ts
-  key: any = "MTIzNDU2Nzg5MEFCQ0RFRkdISUpLTE1O";
+  key1: any = "MTIzNDU2Nzg5MEFCQ0RFRkdISUpLTE1O";
   IV = "MTIzNDU2Nzg=";
 
   // ENCRYPTION USING CBC TRIPLE DES
   encryptUsingTripleDES(res: any, typeObj: boolean): string {
     const data = typeObj ? JSON.stringify(res) : res;
-    const keyHex = CryptoJS.enc.Utf8.parse(this.key);
+    const keyHex = CryptoJS.enc.Utf8.parse(this.key1);
     const iv = CryptoJS.enc.Utf8.parse(this.IV);
     const mode = CryptoJS.mode.CBC;
     const encrypted = CryptoJS.TripleDES.encrypt(data, keyHex, { iv, mode });
@@ -184,10 +188,26 @@ export class ChatroomComponent implements OnInit {
 
   // DECRYPTION USING CBC TRIPLE DES
   decryptUsingTripleDES(encrypted: string): string {
-    const keyHex = CryptoJS.enc.Utf8.parse(this.key);
+    const keyHex = CryptoJS.enc.Utf8.parse(this.key1);
     const iv = CryptoJS.enc.Utf8.parse(this.IV);
     const mode = CryptoJS.mode.CBC;
     const decrypted = CryptoJS.TripleDES.decrypt(encrypted, keyHex, { iv, mode });
     return decrypted.toString(CryptoJS.enc.Utf8);
   }
+
+    
+  encryptUsingAES(plaintext:any,enc_key:any) {
+    let key = CryptoJS.enc.Hex.parse(enc_key);
+    const iv = CryptoJS.enc.Hex.parse('');
+    const ciphertext = CryptoJS.AES.encrypt(plaintext, key, { iv: iv, mode: CryptoJS.mode.ECB }).toString();
+    return ciphertext;
+  }
+
+  decryptionUsingAES(ciphertext:any,dec_key:any) {
+    let key = CryptoJS.enc.Hex.parse(dec_key);
+    const iv = CryptoJS.enc.Hex.parse('');
+    const plaintext = CryptoJS.AES.encrypt(ciphertext, key, { iv: iv, mode: CryptoJS.mode.ECB }).toString();
+    return plaintext;
+  }
+
 }
