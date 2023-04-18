@@ -12,6 +12,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class RegisterComponent implements OnInit {
   key = CryptoJS.enc.Hex.parse('0123456789abcdef0123456789abcdef');
+  iv = CryptoJS.enc.Hex.parse('');
 
   firstFormGroup: FormGroup;
   imageData : any;
@@ -31,16 +32,20 @@ export class RegisterComponent implements OnInit {
   }
 
   new(user:any) {
+    let key1 = user.username;
+    let iv = user.email_id;
+    // let iv = this.encryptUsingAES(user.UserName,this.key,this.iv);
+
     this.user = {
       "username" : user.UserName,
       // "password" : this.encryptUsingTripleDES(user.Password,true),
       // "phone" : this.encryptUsingTripleDES(user.phone,true),
       // "name" : this.encryptUsingTripleDES(user.name,true),
       // "email" : this.encryptUsingTripleDES(user.email,true),
-      "password" : this.encryptUsingAES(user.Password,this.key),
-      "phone" : this.encryptUsingAES(user.phone,this.key),
-      "name" : this.encryptUsingAES(user.name,this.key),
-      "email" : this.encryptUsingAES(user.email,this.key),
+      "password" : this.encryptUsingAES(user.Password,this.key,this.iv),
+      "phone" : this.encryptUsingAES(user.phone,this.key,this.iv),
+      "name" : this.encryptUsingAES(user.name,this.key,this.iv),
+      "email" : this.encryptUsingAES(user.email,this.key,this.iv),
       "hash" :"ab",
       "chats" :""
     }
@@ -95,18 +100,17 @@ export class RegisterComponent implements OnInit {
   }
 
     
-  encryptUsingAES(plaintext:any,enc_key:any) {
-    // let key = CryptoJS.enc.Hex.parse(enc_key);
-    const iv = CryptoJS.enc.Hex.parse('');
-    const ciphertext = CryptoJS.AES.encrypt(plaintext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
+  encryptUsingAES(plaintext:any,enc_key:any,iv:any) {
+    let key = CryptoJS.enc.Hex.parse(enc_key);
+    // const iv = CryptoJS.enc.Hex.parse('');
+    const ciphertext = CryptoJS.AES.encrypt(plaintext, this.key, { iv: this.iv, mode: CryptoJS.mode.CBC }).toString();
     return ciphertext;
   }
 
-  decryptionUsingAES(ciphertext:any,dec_key:any) {
-    // let key = CryptoJS.enc.Hex.parse(dec_key);
-    const iv = CryptoJS.enc.Hex.parse('');
+  decryptionUsingAES(ciphertext:any,dec_key:any,iv:any) {
+    let key = CryptoJS.enc.Hex.parse(dec_key);
     // const plaintext = CryptoJS.AES.encrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
-    const plaintext = CryptoJS.AES.decrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
+    const plaintext = CryptoJS.AES.decrypt(ciphertext, this.key, { iv: this.iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
     return plaintext;
   }
 }

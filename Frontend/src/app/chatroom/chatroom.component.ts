@@ -16,7 +16,9 @@ import * as CryptoJS from 'crypto-js';
 export class ChatroomComponent implements OnInit {
 
   // @ViewChild('mychats') myDiv: any;
-  key = CryptoJS.enc.Hex.parse('0123456789abcdef0123456789abcdef');
+  // key = CryptoJS.enc.Hex.parse('0123456789abcdef0123456789abcdef');
+  key = '0123456789abcdef';
+  iv = CryptoJS.enc.Hex.parse('');
 
   @ViewChild('mychats')
   myDiv!: ElementRef;
@@ -46,11 +48,19 @@ export class ChatroomComponent implements OnInit {
 
 
   ngOnInit(): void {
+
+    // let key = '0123456789abcdef';
+    // console.log(this.encryptUsingAES("hello a",key));
+    // console.log(this.encryptUsingAES("hello yash",this.key));
+
+    // let p = this.encryptUsingAES("U2FsdGVkX1 7 aFg0Puq9VXADXgeJ/G6lPPKRYQZsKk='",this.key);
+    // console.log(this.decryptionUsingAES("U2FsdGVkX1/SnLAgZdD2GQfXK+K/3A7SMMHdiB78n10=",this.key))
     // author = me
     // user = open_chat
     // console.log(this.encryptUsingTripleDES("hi again",true))
     // G4X+qoXB3CfY0iHpTfY0hw==
     // G4X+qoXB3CfY0iHpTfY0hw==
+    // console.log(this.key)
     this.token = this._messagingService.getToken();
     console.log(this.token)
     this.author = this.token.username;
@@ -58,7 +68,7 @@ export class ChatroomComponent implements OnInit {
     this.queue = this.author+this.user;
 
     console.log(this.author,this.user);
-    console.log(this.author+"0000");
+    // console.log(this.author+"0000");
     if (this.author>this.user) {
       this.queue = this.user+this.author;
     }
@@ -72,7 +82,7 @@ export class ChatroomComponent implements OnInit {
       // Code to be executed after 1 second
       this.getMessage();
       console.log('Delayed message');
-    }, 1000);
+    }, 1200);
       // this.getMessage();
       // this.getMessage();
       // this.getMessage();
@@ -105,21 +115,25 @@ export class ChatroomComponent implements OnInit {
       // const date_time = currentTime+"_"+currentDate;
       const date_time = currentTime;
       // console.log(date_time)
+      let key1 = this.author;
+
 
       let new_message_decrypted = {
         "message" : message.message,
         "author" : this.author,
         "date_time" : date_time,
       };
+      let iv = this.author;
 
       let new_message = {
-        "message" : this.encryptUsingAES(message.message,this.key),
-        // "message" : message.message.trim(),
+        // "message" : this.encryptUsingAES(message.message,this.key),
+        "message" : message.message.trim(),
         // "author" : this.encryptUsingTripleDES(this.author.trim(),true).trim(),
         // "date_time" : this.encryptUsingTripleDES(date_time.trim(),true).trim(),
         "author" : this.author,
         // "author" : this.encryptUsingAES(this.author.trim(),this.key).trim(),
-        "date_time" : this.encryptUsingAES(date_time.trim(),this.key).trim(),
+        // "date_time" : this.encryptUsingAES(date_time.trim(),this.key).trim(),
+        "date_time" : this.encryptUsingAES(date_time.trim(),this.key,iv).trim(),
       };
       console.log(new_message);
       // http://127.0.0.1:8080/send?q1,m1,auth,datetime
@@ -157,12 +171,16 @@ export class ChatroomComponent implements OnInit {
 
           let chats = JSON.parse(res.message);
           let msg_list_length = this.message_list.length;
-          console.log(chats);
+          // console.log(chats);
+          let key1 = this.author;
+
           for (let i=msg_list_length-1; i<chats.length;i++) {
 
+          let key1 = this.author;
+
             let message_details = {
-              "message" : this.decryptionUsingAES(chats[i].message,this.key).replaceAll('"',''),
-              // "message" : chats[i].message,
+              // "message" : this.decryptionUsingAES(chats[i].message,this.key).replaceAll('"',''),
+              "message" : chats[i].message,
               // "author" : this.decryptionUsingAES(chats[i].author,this.key).replaceAll('"',''),
               "author" : chats[i].author,
               "date_time" : chats[i].date_time,
@@ -170,7 +188,7 @@ export class ChatroomComponent implements OnInit {
             };
             this.message_list.push(message_details);
           }
-          // console.log(this.message_list);
+          console.log(this.message_list);
           // console.log("===============");
 
           
@@ -204,18 +222,20 @@ export class ChatroomComponent implements OnInit {
   }
 
     
-  encryptUsingAES(plaintext:any,enc_key:any) {
-    // let key = CryptoJS.enc.Hex.parse(enc_key);
-    const iv = CryptoJS.enc.Hex.parse('');
-    const ciphertext = CryptoJS.AES.encrypt(plaintext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
+  encryptUsingAES(plaintext:any,enc_key:any,iv:any) {
+    let key = CryptoJS.enc.Hex.parse(enc_key);
+    // const iv = CryptoJS.enc.Hex.parse('');
+    let ciphertext = CryptoJS.AES.encrypt(plaintext, this.key, { iv: this.iv, mode: CryptoJS.mode.CBC }).toString();
+    ciphertext = ciphertext.replaceAll("\\",">>");
     return ciphertext;
   }
 
-  decryptionUsingAES(ciphertext:any,dec_key:any) {
-    // let key = CryptoJS.enc.Hex.parse(dec_key);
-    const iv = CryptoJS.enc.Hex.parse('');
+  decryptionUsingAES(ciphertext:any,dec_key:any,iv:any) {
+    let key = CryptoJS.enc.Hex.parse(dec_key);
+    // const iv = CryptoJS.enc.Hex.parse('');
+    ciphertext = ciphertext.replaceAll(">>","\\");
     // const plaintext = CryptoJS.AES.encrypt(ciphertext, key, { iv: iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
-    const plaintext = CryptoJS.AES.decrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
+    const plaintext = CryptoJS.AES.decrypt(ciphertext, this.key, { iv: this.iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
     return plaintext;
   }
 

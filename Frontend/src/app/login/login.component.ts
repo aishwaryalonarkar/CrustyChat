@@ -14,6 +14,7 @@ import * as CryptoJS from 'crypto-js';
 })
 export class LoginComponent implements OnInit {
   key = CryptoJS.enc.Hex.parse('0123456789abcdef0123456789abcdef');
+  iv = CryptoJS.enc.Hex.parse('');
 
   firstFormGroup: FormGroup;
   is_auth = {
@@ -56,10 +57,12 @@ export class LoginComponent implements OnInit {
   auth_1(auth:any) {
     console.log(auth);
     let username = auth.username;
-    let key1 = username;
+    // let iv = auth.username;
+    let iv = auth.email_id;
+
     let user_data = {
       "username" : username,
-      "password" : this.encryptUsingAES(auth.password,this.key)
+      "password" : this.encryptUsingAES(auth.password,this.key,iv)
     }
 
     let payloadString = JSON.stringify(user_data)
@@ -137,17 +140,17 @@ export class LoginComponent implements OnInit {
   }
 
   
-  encryptUsingAES(plaintext:any,enc_key:any) {
-    // let key = CryptoJS.enc.Hex.parse(enc_key);
-    const iv = CryptoJS.enc.Hex.parse('');
-    const ciphertext = CryptoJS.AES.encrypt(plaintext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
+  encryptUsingAES(plaintext:any,enc_key:any,iv:any) {
+    let key = CryptoJS.enc.Hex.parse(enc_key);
+    // const iv = CryptoJS.enc.Hex.parse('');
+    const ciphertext = CryptoJS.AES.encrypt(plaintext, this.key, { iv: this.iv, mode: CryptoJS.mode.CBC }).toString();
     return ciphertext;
   }
 
-  decryptionUsingAES(ciphertext:any,dec_key:any) {
-    // let key = CryptoJS.enc.Hex.parse(dec_key);
-    const iv = CryptoJS.enc.Hex.parse('');
-    const plaintext = CryptoJS.AES.decrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
+  decryptionUsingAES(ciphertext:any,dec_key:any,iv:any) {
+    let key = CryptoJS.enc.Hex.parse(dec_key);
+    // const iv = CryptoJS.enc.Hex.parse('');
+    const plaintext = CryptoJS.AES.decrypt(ciphertext, this.key, { iv: this.iv, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
     // const plaintext = CryptoJS.AES.encrypt(ciphertext, this.key, { iv: iv, mode: CryptoJS.mode.CBC }).toString();
     return plaintext;
   }
